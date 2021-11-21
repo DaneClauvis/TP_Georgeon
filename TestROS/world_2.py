@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # TODO Import the Turtlesim environment when ROS is installed
-# from turtlesim_enacter import TurtleSimEnacter
+from turtlepy_enacter import TurtlePyEnacter
 
 # Olivier Georgeon, 2020.
 # This code is used to teach Develpmental AI.
@@ -15,29 +15,29 @@ class Agent:
         self.history = {0: 0, 1: 0}
         self.reward = {0: 0, 1: 0}
         self.identical = 0
+    def is_identical(self, last_action, action):
+        if last_action == action:
+            self.identical += 1
+        else:
+            self.identical = 0
 
     def action(self, outcome):
         """ Computing the next action to enact """
         # TODO: Implement the agent's decision mechanism
         prediction, reward = self.satisfaction(outcome)
-        self.reward[self.action] = reward
-        if self.identical <= 4:
-            self.history[self._action] = outcome
-            last_action = self._action
-            self._action = max(self.reward, key=self.reward.get)
-            if last_action == self._action:
-                self.identical += 1
-            # TODO: Implement the agent's anticipation mechanism
+        self.reward[self._action] = reward
+        last_action = self._action
+        self._action = max(self.reward, key=self.reward.get)
+        self.is_identical(last_action, self._action)
+        self.history[self._action] = outcome
+        if self.identical < 4:
             self.anticipated_outcome = self.history[self._action]
+            return self._action
         else:
-            self.identical = 0
-            if self._action:
-                self._action = 0
+            if last_action:
                 return 0
             else:
-                self._action = 1
                 return 1
-        return self._action
 
     def anticipation(self):
         """ Returning the anticipated outcome that was computed when choosing the action """
@@ -76,7 +76,7 @@ class Environment2:
 def world(agent, environment):
     """ The main loop controlling the interaction of the agent with the environment """
     outcome = 0
-    for i in range(10):
+    for i in range(20):
         action = agent.action(outcome)
         outcome = environment.outcome(action)
         print(" Action: " + str(action) + ", Anticipation: " + str(agent.anticipation()) + ", Outcome: " + str(outcome)
@@ -88,8 +88,31 @@ hedonist_table = [[-1, 1], [-1, 1]]
 # TODO Choose an agent
 a = Agent(hedonist_table)
 # TODO Choose an environment
-e = Environment1()
-e = Environment2()
-# e = TurtleSimEnacter()
+#e = Environment1()
+#e = Environment2()
+e = TurtlePyEnacter()
 
 world(a, e)
+
+'''
+#print(self.reward)
+        if self.identical < 4:
+            self.history[self._action] = outcome
+            last_action = self._action
+            print(self.reward)
+            self._action = max(self.reward, key=self.reward.get)
+            #print(self._action)
+            self.is_identical(last_action, self._action)
+            # TODO: Implement the agent's anticipation mechanism
+            self.anticipated_outcome = self.history[self._action]
+        else:
+            self.identical = 0
+            if self._action:
+                self._action = 0
+                self.anticipated_outcome = self.history[self._action]
+                return 0
+            else:
+                self._action = 1
+                self.anticipated_outcome = self.history[self._action]
+                return 1
+'''

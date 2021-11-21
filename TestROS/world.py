@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # TODO Import the Turtlesim environment when ROS is installed
-# from turtlesim_enacter import TurtleSimEnacter
+from turtlepy_enacter import TurtlePyEnacter
 
 # Olivier Georgeon, 2020.
 # This code is used to teach Develpmental AI.
@@ -20,19 +20,18 @@ class Agent:
         # TODO: Implement the agent's decision mechanism
         if self.identical <= 4:
             self.history[self._action] = outcome
-            last_action = self._action
-            self._action = max(self.history, key=self.history.get)
-            if last_action == self._action:
-                self.identical += 1
+            self.identical += 1
             # TODO: Implement the agent's anticipation mechanism
             self.anticipated_outcome = self.history[self._action]
         else:
             self.identical = 0
             if self._action:
                 self._action = 0
+                self.anticipated_outcome = self.history[self._action]
                 return 0
             else:
                 self._action = 1
+                self.anticipated_outcome = self.history[self._action]
                 return 1
         return self._action
 
@@ -73,7 +72,7 @@ class Environment2:
 def world(agent, environment):
     """ The main loop controlling the interaction of the agent with the environment """
     outcome = 0
-    for i in range(10):
+    for i in range(20):
         action = agent.action(outcome)
         outcome = environment.outcome(action)
         print(" Action: " + str(action) + ", Anticipation: " + str(agent.anticipation()) + ", Outcome: " + str(outcome)
@@ -85,8 +84,8 @@ hedonist_table = [[-1, 1], [-1, 1]]
 # TODO Choose an agent
 a = Agent(hedonist_table)
 # TODO Choose an environment
-e = Environment1()
+#e = Environment1()
 e = Environment2()
-# e = TurtleSimEnacter()
+#e = TurtlePyEnacter()
 
 world(a, e)

@@ -13,7 +13,7 @@ class TurtlePyEnacter:
     def __init__(self):
         """ Creating the Turtle window """
         self.screen = turtle.getscreen()
-        self.screen.setup(400, 400)
+        self.screen.setup(600, 600)
         self.turtle = turtle.Turtle("turtle")
         self.turtle.color("green")
         self.turtle.speed(1)

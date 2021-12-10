@@ -4,6 +4,8 @@
 # from turtlesim_enacter import TurtleSimEnacter # requires ROS
 from turtlepy_enacter import TurtlePyEnacter
 import random
+import copy
+from ressources import Interaction
 
 class Agent:
     def __init__(self, _hedonist_table):
@@ -11,9 +13,13 @@ class Agent:
         self.hedonist_table = _hedonist_table
         self._action = 0
         self.anticipated_outcome = None
-        self.outcome_dict = {0: 0, 1: 0}
-        self.hedo_dict = {0:0, 1:0}
+        self.outcome_dict = {0: 0, 1: 0, 2: 0}
+        self.hedo_dict = {0: 0, 1: 0, 2: 0}
         self.action_history = 0
+        self.possible_action = [0, 1, 2]
+        self.interaction_history = {}
+        self.last_inter = None
+        self.current_inter = None
 
     def action(self, outcome):
         """ tracing the previous cycle """
@@ -28,29 +34,46 @@ class Agent:
         self.outcome_dict[self._action] = outcome
         satisfaction = self.hedonist_table[self._action][outcome]
         self.hedo_dict[self._action] = satisfaction
-        print(self.hedo_dict)
+        # print(self.hedo_dict)
+        self.last_inter = copy.deepcopy(self.current_inter)
+        self.current_inter = Interaction(self._action, outcome, satisfaction)
+        self.interaction_history[self.last_inter] = self.current_inter
+
         if self.action_history <= 3:
-            if self.hedo_dict[self._action] == 1:
-                self.anticipated_outcome = self.outcome_dict[self._action]
-                self.action_history += 1
-                print("meme action")
-                print("------------------------------------------------------------------------------------")
-                return self._action
+            if self.current_inter in self.interaction_history.keys():
+                if self.interaction_history[self.current_inter].valence == 1:
+                    action = self.interaction_history[self.current_inter].action
+                    if action == self._action:
+                        self.action_history += 1
+                    else:
+                        self.possible_action = 0
+                else:
+                    if self.hedo_dict[self._action] == 1:
+                        self.anticipated_outcome = self.outcome_dict[self._action]
+                        self.action_history += 1
+                        # print("meme action")
+                        print("------------------------------------------------------------------------------------")
+                        return self._action
+                    else:
+                        # print("action maximale random")
+                        maximum = max(self.hedo_dict.values())
+                        # print("maximum : ", maximum)
+                        action_list = [k for k,v in self.hedo_dict.items() if v == maximum]
+                        # print("liste : ", action_list)
+                        self._action = random.choice(action_list)
+                        # print("action : ", self._action)
+                        self.anticipated_outcome = self.outcome_dict[self._action]
+                        self.action_history += 1
+                        print("------------------------------------------------------------------------------------")
+                        return self._action
             else:
-                print("action maximale random")
-                maximum = max(self.hedo_dict.values())
-                print("maximum : ", maximum)
-                action_list = [k for k,v in self.hedo_dict.items() if v == maximum]
-                print("liste : ", action_list)
-                self._action = random.choice(action_list)
-                print("action : ", self._action)
-                self.anticipated_outcome = self.outcome_dict[self._action]
-                self.action_history += 1
-                print("------------------------------------------------------------------------------------")
-                return self._action
+                self._action = random.choice(self.possible_action)
         else:
             self.action_history = 0
-            self._action = 1 - self._action
+            action_temp = copy.deepcopy(self.possible_action)
+            action_temp.remove(self._action)
+            action = random.choice(action_temp)
+            self._action = action
             print("------------------------------------------------------------------------------------")
             return self._action
 
@@ -90,16 +113,16 @@ class Environment3:
 
 
 # TODO Define the hedonist valance of interactions (action, outcome)
-hedonist_table = [[-1, 1], [-1, 1]]
+hedonist_table = [[-1, 1], [-1, 1], [1, 1]]
 # TODO Choose an agent
 a = Agent(hedonist_table)
 # a = Agent4(hedonist_table)
 # TODO Choose an environment
-# e = Environment1()
+e = Environment1()
 # e = Environment2()
 # e = Environment3()
 #e = TurtleSimEnacter()
-e = TurtlePyEnacter()
+# e = TurtlePyEnacter()
 
 if __name__ == '__main__':
     """ The main loop controlling the interaction of the agent with the environment """

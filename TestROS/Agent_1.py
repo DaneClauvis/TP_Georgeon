@@ -69,7 +69,7 @@ class Environment3:
 
 
 # TODO Define the hedonist valance of interactions (action, outcome)
-hedonist_table = [[-1, 1], [-1, 1]]
+hedonist_table = [[1, -1], [1, -1]]
 # TODO Choose an agent
 a = Agent(hedonist_table)
 # a = Agent4(hedonist_table)
@@ -83,6 +83,6 @@ e = Environment1()
 if __name__ == '__main__':
     """ The main loop controlling the interaction of the agent with the environment """
     outcome = 0
-    for i in range(30):
+    for i in range(20):
         action = a.action(outcome)
         outcome = e.outcome(action)

@@ -22,7 +22,7 @@ class TurtlePyEnacter:
         """ Enacting an action and returning the outcome """
         self.turtle.color("green")
         _outcome = 0
-        for i in range(10):
+        for i in range(50):
             if action == 0:
                 # move forward
                 self.turtle.speed(1)

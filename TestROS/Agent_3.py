@@ -88,7 +88,7 @@ class Environment3:
 
 
 # TODO Define the hedonist valance of interactions (action, outcome)
-hedonist_table = [[-1, 1], [-1, 1], [1, 1]]
+hedonist_table = [[-1, 1], [-1, 1], [1, -1]]
 # TODO Choose an agent
 a = Agent(hedonist_table)
 # a = Agent4(hedonist_table)

@@ -28,30 +28,21 @@ class Agent:
         self.outcome_dict[self._action] = outcome
         satisfaction = self.hedonist_table[self._action][outcome]
         self.hedo_dict[self._action] = satisfaction
-        print(self.hedo_dict)
         if self.action_history <= 3:
             if self.hedo_dict[self._action] == 1:
                 self.anticipated_outcome = self.outcome_dict[self._action]
                 self.action_history += 1
-                print("meme action")
-                print("------------------------------------------------------------------------------------")
                 return self._action
             else:
-                print("action maximale random")
                 maximum = max(self.hedo_dict.values())
-                print("maximum : ", maximum)
                 action_list = [k for k,v in self.hedo_dict.items() if v == maximum]
-                print("liste : ", action_list)
                 self._action = random.choice(action_list)
-                print("action : ", self._action)
                 self.anticipated_outcome = self.outcome_dict[self._action]
                 self.action_history += 1
-                print("------------------------------------------------------------------------------------")
                 return self._action
         else:
             self.action_history = 0
             self._action = 1 - self._action
-            print("------------------------------------------------------------------------------------")
             return self._action
 
 
@@ -96,14 +87,14 @@ a = Agent(hedonist_table)
 # a = Agent4(hedonist_table)
 # TODO Choose an environment
 # e = Environment1()
-# e = Environment2()
+e = Environment2()
 # e = Environment3()
 #e = TurtleSimEnacter()
-e = TurtlePyEnacter()
+# e = TurtlePyEnacter()
 
 if __name__ == '__main__':
     """ The main loop controlling the interaction of the agent with the environment """
     outcome = 0
-    for i in range(30):
+    for i in range(20):
         action = a.action(outcome)
         outcome = e.outcome(action)
